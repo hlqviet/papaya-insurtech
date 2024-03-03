@@ -1,5 +1,6 @@
 import { Navigate } from 'react-router-dom'
 
+import ButtonWide from '../../components/Buttons/ButtonWide'
 import Layout from '../../components/Layout'
 import Spinner from '../../components/Spinner'
 import useAuth from '../../hooks/useAuth/useAuth'
@@ -24,11 +25,10 @@ const LoginPage = () => {
       <p>Choose a user to login</p>
       <div className='w-full max-h-96 overflow-y-auto flex flex-col gap-2'>
         {data.users.map(({ id, firstName, lastName, password, username }) => (
-          <button
+          <ButtonWide
             key={id}
-            className='btn btn-wide'
             onClick={() => void login({ username, password })}
-          >{`${firstName} ${lastName}`}</button>
+          >{`${firstName} ${lastName}`}</ButtonWide>
         ))}
       </div>
     </Layout>
