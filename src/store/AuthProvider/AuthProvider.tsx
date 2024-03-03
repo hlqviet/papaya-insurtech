@@ -1,12 +1,13 @@
 import { useLocalStorage } from '@uidotdev/usehooks'
 import { createContext, PropsWithChildren, useCallback, useMemo } from 'react'
+import { useMutation } from 'react-query'
 
 import { Auth } from '../../hooks/useAuth/types'
 import { API_HOST } from '../../lib/constants'
 
 type AuthContextType = {
   user: Auth | null
-  login: (data: { username: string; password: string }) => Promise<void>
+  login: (params: { username: string; password: string }) => Promise<void>
   logout: () => void
 }
 
@@ -19,10 +20,10 @@ export const AuthContext = createContext<AuthContextType>({
 const AuthProvider = (props: PropsWithChildren) => {
   const { children } = props
   const [user, setUser] = useLocalStorage<Auth | null>('user', null)
-
-  const login = useCallback(
-    async (data: { username: string; password: string }) => {
-      const { username, password } = data
+  const { mutateAsync: login } = useMutation(
+    'auth/login',
+    async (params: { username: string; password: string }) => {
+      const { username, password } = params
       const response = await fetch(`${API_HOST}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -34,8 +35,7 @@ const AuthProvider = (props: PropsWithChildren) => {
       }
 
       setUser((await response.json()) as Auth)
-    },
-    [setUser]
+    }
   )
 
   const logout = useCallback(() => {
